@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import ed.iu.p566.taco_cloud.model.Ingredient;
 import ed.iu.p566.taco_cloud.model.Ingredient.Type;
 import ed.iu.p566.taco_cloud.model.Taco;
+import ed.iu.p566.taco_cloud.model.TacoOrder;
 @Slf4j
 @Controller
 @RequestMapping("/design")
@@ -37,19 +38,29 @@ for (Type type : types) {
 model.addAttribute(type.toString().toLowerCase(),
 filterByType(ingredients, type));
 }
+}
 @ModelAttribute(name = "tacoOrder")
 public TacoOrder order() {
 return new TacoOrder();
+}
+
 @ModelAttribute(name = "taco")
 public Taco taco() {
 return new Taco();
+}
 @GetMapping
 public String showDesignForm() {
 return "design";
 }
+@PostMapping
+public String processTaco(Taco taco,
+@ModelAttribute TacoOrder tacoOrder) {
+tacoOrder.addTaco(taco);
+log.info("Processing taco: {}", taco);
+return "redirect:/orders/current";
 }
-}
-}
+
+
 private Iterable<Ingredient> filterByType(
 List<Ingredient> ingredients, Type type) {
 return ingredients
